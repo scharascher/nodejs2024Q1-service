@@ -11,41 +11,40 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserService } from './user.service';
 import { UUID_VERSION } from '../shared/const/uuid';
-import { UpdatePasswordDto } from './dto/update-password.dto';
+import { TrackService } from './track.service';
+import { CreateTrackDto } from './dto/create-track.dto';
 
-@Controller('user')
-export class UserController {
-  constructor(private user: UserService) {}
+@Controller('track')
+export class TrackController {
+  constructor(private trackService: TrackService) {}
   @Get()
-  async users() {
-    return this.user.getAllUsers();
+  async tracks() {
+    return this.trackService.getAllTracks();
   }
   @Get(':id')
-  async userById(
+  async trackById(
     @Param('id', new ParseUUIDPipe({ version: `${UUID_VERSION}` }))
     id: string,
   ) {
-    return this.user.getUserById(id);
+    return this.trackService.getTrackById(id);
   }
 
   @UsePipes(new ValidationPipe())
   @Post()
   @HttpCode(201)
-  async create(@Body() createUserDto: CreateUserDto) {
-    return this.user.createUser(createUserDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.trackService.createTrack(createTrackDto);
   }
 
   @UsePipes(new ValidationPipe())
   @Put(':id')
-  async updatePassword(
+  async updateTrack(
     @Param('id', new ParseUUIDPipe({ version: `${UUID_VERSION}` }))
     id: string,
-    @Body() createUserDto: UpdatePasswordDto,
+    @Body() updateTrackDto: CreateTrackDto,
   ) {
-    return this.user.updatePassword(id, createUserDto);
+    return this.trackService.updateTrack(id, updateTrackDto);
   }
 
   @UsePipes(new ValidationPipe())
@@ -55,6 +54,6 @@ export class UserController {
     @Param('id', new ParseUUIDPipe({ version: `${UUID_VERSION}` }))
     id: string,
   ) {
-    return this.user.deleteUser(id);
+    return this.trackService.deleteTrack(id);
   }
 }
