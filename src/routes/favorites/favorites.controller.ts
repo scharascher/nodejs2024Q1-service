@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
-import { UUID_VERSION } from '../shared/const/uuid';
+import { UUID_VERSION } from '../../shared/const/uuid';
 
 @Controller('favs')
 export class FavoritesController {

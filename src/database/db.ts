@@ -1,10 +1,9 @@
-import { User } from '@prisma/client';
-import { IUser } from '../user/user.interface';
-import { ITrack } from '../track/track.interface';
+import { IUser } from '../routes/user/user.interface';
+import { ITrack } from '../routes/track/track.interface';
 import { v4 } from 'uuid';
-import { IArtist } from '../artist/artist.interface';
-import { IAlbum } from '../album/album.interface';
-import { IFavorites } from '../favorites/favorites.interface';
+import { IArtist } from '../routes/artist/artist.interface';
+import { IAlbum } from '../routes/album/album.interface';
+import { IFavorites } from '../routes/favorites/favorites.interface';
 export const DATABASE: {
   user: IUser[];
   track: ITrack[];

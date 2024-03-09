@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DATABASE, getId } from '../database/db';
+import { DATABASE, getId } from '../../database/db';
 import { CreateAlbumDto } from './dto/create-album.dto';
 
 @Injectable()

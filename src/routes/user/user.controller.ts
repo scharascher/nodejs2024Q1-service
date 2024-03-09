@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
-import { UUID_VERSION } from '../shared/const/uuid';
+import { UUID_VERSION } from '../../shared/const/uuid';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Controller('user')

@@ -9,7 +9,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { UUID_VERSION } from '../../shared/const/uuid';
+import { UUID_VERSION } from '../../../shared/const/uuid';
 import { Expose, Transform, Type } from 'class-transformer';
 
 export class UserDto implements Omit<IUser, 'password'> {

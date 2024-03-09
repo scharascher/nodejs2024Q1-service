@@ -11,7 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UUID_VERSION } from '../shared/const/uuid';
+import { UUID_VERSION } from '../../shared/const/uuid';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 
