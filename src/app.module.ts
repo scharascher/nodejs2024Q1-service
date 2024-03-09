@@ -4,6 +4,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from './shared/shared.module';
 import { TrackModule } from './track/track.module';
+import { ArtistService } from './artist/artist.service';
+import { ArtistModule } from './artist/artist.module';
+import { AlbumModule } from './album/album.module';
 
 @Module({
   imports: [
@@ -12,6 +15,8 @@ import { TrackModule } from './track/track.module';
     PrismaModule,
     UserModule,
     TrackModule,
+    ArtistModule,
+    AlbumModule,
   ],
 })
 export class AppModule {}
