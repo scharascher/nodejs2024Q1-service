@@ -11,14 +11,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from '@prisma/client';
+import { DATABASE, getId } from '../database/db';
+import { IUser } from './user.interface';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  // constructor(private prisma: PrismaService) {}
 
   async getAllUsers() {
-    const users = await this.prisma.user.findMany();
-    return UserService.GetUserDto(users);
+    // const users = await this.prisma.user.findMany();
+    return UserService.GetUserDto(DATABASE.user);
   }
   async getUserById(id: string) {
     const user = await this.findUserById(id);
@@ -26,53 +28,70 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { login: createUserDto.login },
-    });
+    const user = DATABASE.user.find((u) => u.login === createUserDto.login);
     if (user)
       throw new BadRequestException(
         `User with login "${createUserDto.login}" already exists`,
       );
-
-    return UserService.GetUserDto(
-      await this.prisma.user.create({
-        data: {
-          login: createUserDto.login,
-          password: await UserService.GetPasswordHash(createUserDto.password),
-        },
-      }),
-    );
+    // const user = await this.prisma.user.create({
+    //   data: {
+    //     login: createUserDto.login,
+    //     password: await UserService.GetPasswordHash(createUserDto.password),
+    //   },
+    // });
+    DATABASE.user.push({
+      id: getId(),
+      login: createUserDto.login,
+      password: await UserService.GetPasswordHash(createUserDto.password),
+      createdAt: +new Date(),
+      updatedAt: +new Date(),
+      version: 1,
+    });
+    const newUser = DATABASE.user[DATABASE.user.length - 1];
+    return UserService.GetUserDto(newUser);
   }
 
   async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     const user = await this.findUserById(id);
     if (!(await bcrypt.compare(updatePasswordDto.oldPassword, user.password)))
       throw new ForbiddenException('Old password is wrong');
-    return UserService.GetUserDto(
-      await this.prisma.user.update({
-        where: { id },
-        data: {
-          password: await UserService.GetPasswordHash(
-            updatePasswordDto.newPassword,
-          ),
-          version: user.version + 1,
-        },
-      }),
-    );
+    // const updatedUser = await this.prisma.user.update({
+    //   where: { id },
+    //   data: {
+    //     password: await UserService.GetPasswordHash(
+    //       updatePasswordDto.newPassword,
+    //     ),
+    //     version: user.version + 1,
+    //   },
+    // });
+    const index = DATABASE.user.findIndex((t) => t.id === id);
+    DATABASE.user[index] = {
+      ...user,
+      password: await UserService.GetPasswordHash(
+        updatePasswordDto.newPassword,
+      ),
+      version: user.version + 1,
+      updatedAt: +new Date(),
+    };
+    const updatedUser = DATABASE.user[index];
+    return UserService.GetUserDto(updatedUser);
   }
   async deleteUser(id: string) {
     await this.findUserById(id);
-    return this.prisma.user.delete({ where: { id } });
+    // return this.prisma.user.delete({ where: { id } });
+    const index = DATABASE.user.findIndex((t) => t.id === id);
+    DATABASE.user.splice(index, 1);
   }
 
   private async findUserById(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id },
-    });
+    // const user = await this.prisma.user.findUnique({
+    //   where: { id },
+    // });
+    const user = DATABASE.user.find((t) => t.id === id);
     if (!user) throw new NotFoundException(`User not found`);
     return user;
   }
-  private static GetUserDto(user: User | User[]) {
+  private static GetUserDto(user: unknown) {
     return plainToClass(UserDto, user, { excludeExtraneousValues: true });
   }
   private static async GetPasswordHash(password: string) {
