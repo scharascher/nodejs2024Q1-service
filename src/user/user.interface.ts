@@ -1,4 +1,6 @@
-export interface User {
+import { User } from '@prisma/client';
+
+export interface IUser {
   id: string; // uuid v4
   login: string;
   password: string;
