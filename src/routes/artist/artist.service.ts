@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE, getId } from '../../database/db';
 import { CreateArtistDto } from './dto/create-artist.dto';
+import { ARTIST_NOT_FOUND_ERROR } from 'src/routes/artist/const';
+import { UpdateArtistDto } from 'src/routes/artist/dto/update-artist.dto';
 
 @Injectable()
 export class ArtistService {
@@ -18,7 +20,7 @@ export class ArtistService {
     });
     return DATABASE.artist[DATABASE.artist.length - 1];
   }
-  async updateArtist(id: string, createArtistDto: CreateArtistDto) {
+  async updateArtist(id: string, createArtistDto: UpdateArtistDto) {
     const artist = await this.findArtistById(id);
     const index = DATABASE.artist.findIndex((t) => t.id === id);
     DATABASE.artist[index] = { ...artist, ...createArtistDto };
@@ -37,7 +39,7 @@ export class ArtistService {
   }
   private async findArtistById(id: string) {
     const artist = DATABASE.artist.find((t) => t.id === id);
-    if (!artist) throw new NotFoundException(`User not found`);
+    if (!artist) throw new NotFoundException(ARTIST_NOT_FOUND_ERROR);
     return artist;
   }
 }

@@ -23,19 +23,19 @@ export class FavoritesService {
   }
   async addArtist(id) {
     const obj = await this.findById('artist', id);
-    if (!obj) throw new UnprocessableEntityException('Artist not found');
+    if (!obj) throw new UnprocessableEntityException("Artist doesn't exist");
     DATABASE.favorites.artists.push(id);
     return 'Success';
   }
   async addAlbum(id) {
     const obj = await this.findById('album', id);
-    if (!obj) throw new UnprocessableEntityException('Album not found');
+    if (!obj) throw new UnprocessableEntityException("Album doesn't exist");
     DATABASE.favorites.albums.push(id);
     return 'Success';
   }
   async addTrack(id) {
     const obj = await this.findById('track', id);
-    if (!obj) throw new UnprocessableEntityException('Track not found');
+    if (!obj) throw new UnprocessableEntityException("Track doesn't exist");
     DATABASE.favorites.tracks.push(id);
     return 'Success';
   }

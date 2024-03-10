@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE, getId } from '../../database/db';
 import { CreateAlbumDto } from './dto/create-album.dto';
+import { ALBUM_NOT_FOUND_ERROR } from 'src/routes/album/const';
+import { UpdateAlbumDto } from 'src/routes/album/dto/update-album.dto';
 
 @Injectable()
 export class AlbumService {
@@ -17,10 +19,10 @@ export class AlbumService {
     });
     return DATABASE.album[DATABASE.album.length - 1];
   }
-  async updateAlbum(id: string, createAlbumDto: CreateAlbumDto) {
+  async updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
     const album = await this.findAlbumById(id);
     const index = DATABASE.album.findIndex((t) => t.id === id);
-    DATABASE.album[index] = { ...album, ...createAlbumDto };
+    DATABASE.album[index] = { ...album, ...updateAlbumDto };
     return DATABASE.album[index];
   }
   async deleteAlbum(id: string) {
@@ -33,7 +35,7 @@ export class AlbumService {
   }
   private async findAlbumById(id: string) {
     const album = DATABASE.album.find((t) => t.id === id);
-    if (!album) throw new NotFoundException(`User not found`);
+    if (!album) throw new NotFoundException(ALBUM_NOT_FOUND_ERROR);
     return album;
   }
 }

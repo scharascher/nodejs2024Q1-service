@@ -11,6 +11,11 @@ import * as bcrypt from 'bcrypt';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { DATABASE, getId } from '../../database/db';
 
+import {
+  OLD_PASSWORD_IS_WRONG_ERROR,
+  USER_NOT_FOUND_ERROR,
+} from 'src/routes/user/const';
+
 @Injectable()
 export class UserService {
   // constructor(private prisma: PrismaService) {}
@@ -51,7 +56,7 @@ export class UserService {
   async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     const user = await this.findUserById(id);
     if (!(await bcrypt.compare(updatePasswordDto.oldPassword, user.password)))
-      throw new ForbiddenException('Old password is wrong');
+      throw new ForbiddenException(OLD_PASSWORD_IS_WRONG_ERROR);
     // const updatedUser = await this.prisma.user.update({
     //   where: { id },
     //   data: {
@@ -85,7 +90,7 @@ export class UserService {
     //   where: { id },
     // });
     const user = DATABASE.user.find((t) => t.id === id);
-    if (!user) throw new NotFoundException(`User not found`);
+    if (!user) throw new NotFoundException(USER_NOT_FOUND_ERROR);
     return user;
   }
   private static GetUserDto(user: unknown) {

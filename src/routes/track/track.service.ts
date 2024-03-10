@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DATABASE, getId } from '../../database/db';
 import { CreateTrackDto } from './dto/create-track.dto';
+import { USER_NOT_FOUND_ERROR } from 'src/routes/user/const';
+import { UpdateTrackDto } from 'src/routes/track/dto/update-track.dto';
 
 @Injectable()
 export class TrackService {
@@ -17,10 +19,10 @@ export class TrackService {
     });
     return DATABASE.track[DATABASE.track.length - 1];
   }
-  async updateTrack(id: string, createTrackDto: CreateTrackDto) {
+  async updateTrack(id: string, updateTrackDto: UpdateTrackDto) {
     const track = await this.findTrackById(id);
     const index = DATABASE.track.findIndex((t) => t.id === id);
-    DATABASE.track[index] = { ...track, ...createTrackDto };
+    DATABASE.track[index] = { ...track, ...updateTrackDto };
     return DATABASE.track[index];
   }
   async deleteTrack(id: string) {
@@ -30,7 +32,7 @@ export class TrackService {
   }
   private async findTrackById(id: string) {
     const track = DATABASE.track.find((t) => t.id === id);
-    if (!track) throw new NotFoundException(`User not found`);
+    if (!track) throw new NotFoundException(USER_NOT_FOUND_ERROR);
     return track;
   }
 }
