@@ -1,40 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { DATABASE, getId } from '../../database/db';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { ALBUM_NOT_FOUND_ERROR } from 'src/routes/album/const';
 import { UpdateAlbumDto } from 'src/routes/album/dto/update-album.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { plainToInstance } from 'class-transformer';
+import { AlbumDto } from 'src/routes/album/dto/album.dto';
 
 @Injectable()
 export class AlbumService {
+  constructor(private prisma: PrismaService) {}
   async getAllAlbums() {
-    return DATABASE.album;
+    return plainToInstance(AlbumDto, await this.prisma.album.findMany());
   }
   async getAlbumById(id: string) {
-    return await this.findAlbumById(id);
+    return plainToInstance(AlbumDto, await this.findAlbumById(id));
   }
   async createAlbum(createAlbumDto: CreateAlbumDto) {
-    DATABASE.album.push({
-      id: getId(),
-      ...createAlbumDto,
-    });
-    return DATABASE.album[DATABASE.album.length - 1];
+    return plainToInstance(
+      AlbumDto,
+      await this.prisma.album.create({
+        data: createAlbumDto,
+      }),
+    );
   }
   async updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const album = await this.findAlbumById(id);
-    const index = DATABASE.album.findIndex((t) => t.id === id);
-    DATABASE.album[index] = { ...album, ...updateAlbumDto };
-    return DATABASE.album[index];
+    await this.findAlbumById(id);
+    return plainToInstance(
+      AlbumDto,
+      await this.prisma.album.update({
+        where: { id },
+        data: updateAlbumDto,
+      }),
+    );
   }
   async deleteAlbum(id: string) {
-    const album = await this.findAlbumById(id);
-    DATABASE.track = DATABASE.track.map((t) =>
-      t.albumId === album.id ? { ...t, albumId: null } : t,
-    );
-    const index = DATABASE.album.findIndex((t) => t.id === id);
-    DATABASE.album.splice(index, 1);
+    await this.findAlbumById(id);
+    await this.prisma.album.delete({
+      where: { id },
+    });
   }
   private async findAlbumById(id: string) {
-    const album = DATABASE.album.find((t) => t.id === id);
+    const album = await this.prisma.album.findUnique({
+      where: { id },
+    });
     if (!album) throw new NotFoundException(ALBUM_NOT_FOUND_ERROR);
     return album;
   }
