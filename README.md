@@ -7,7 +7,7 @@
 2. Install npm modules: `npm install`
 3. Copy `.env.example` file to `.env`
 4. Install docker desktop if needed https://www.docker.com/products/docker-desktop/
-5. Run app in a docker by running one of the commands:<br> - `npm run migrate:dev`<br> - `docker compose up --build`
+5. Run app in a docker by running one of the commands:<br> - `npm run docker:start`<br> - `docker compose up --build`
 6. After first run make a migration for database by running `npm run migrate:dev`
 7. App is running and available by `http://localhost:4000`
 
