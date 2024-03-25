@@ -1,15 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -28,16 +22,18 @@ model Artist {
   grammy      Boolean     @default(false)
   tracks      Track[]
   albums      Album[]
+  favorite    FavArtists?
 }
 
 model Track {
   id          String      @id @default(uuid())
   name        String
   artistId    String?
-  artist      Artist?     @relation(fields: [artistId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  artist      Artist?     @relation(fields: [artistId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   albumId     String?
-  album       Album?      @relation(fields: [albumId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  album       Album?      @relation(fields: [albumId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   duration    Int
+  favorite    FavTracks?
 }
 
 model Album {
@@ -45,6 +41,25 @@ model Album {
   name        String
   year        Int
   artistId    String?
-  artist      Artist?     @relation(fields: [artistId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  artist      Artist?     @relation(fields: [artistId], references: [id], onDelete: SetNull, onUpdate: NoAction)
   tracks      Track[]
+  favorite    FavAlbums?
+}
+
+model FavTracks {
+  id      String @id @default(uuid())
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId String @unique
+}
+
+model FavAlbums {
+  id      String @id @default(uuid())
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  albumId String @unique
+}
+
+model FavArtists {
+  id       String @id @default(uuid())
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  artistId String @unique
 }
