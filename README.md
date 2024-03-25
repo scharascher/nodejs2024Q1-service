@@ -3,46 +3,19 @@
 ### Installation
 
 **!!! Use Node.js LTS version !!!** 
-- Clone this repository 
-- Install npm modules: `npm install`
-- Copy `.env.example` file to `.env`
+1. Clone this repository 
+2. Install npm modules: `npm install`
+3. Copy `.env.example` file to `.env`
+4. Install docker desktop if needed https://www.docker.com/products/docker-desktop/
+5. Run app in a docker by running one of the commands:<br> - `npm run migrate:dev`<br> - `docker compose up --build`
+6. After first run make a migration for database by running `npm run migrate:dev`
+7. App is running and available by `http://localhost:4000`
 
-### Running application
-
-#### Dev mode
-
-```
-npm start
-```
-
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/docs/.
-
-#### Dev mode with watch
+### Scan images for vulnerabilities
 
 ```
-npm run start:dev
+npm run docker:scan
 ```
-
-#### Dev mode with watch & debug
-
-```
-npm run start:debug
-```
-
-#### Build app for prod mode
-
-```
-npm run build
-```
-
-#### Prod mode
-
-```
-npm run start:prod
-```
-
-
 
 ### Testing
 

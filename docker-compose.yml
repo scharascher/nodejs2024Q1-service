@@ -1,6 +1,7 @@
 services:
   nest:
     container_name: hls-nest
+    image: scharascher/hls-nest:task-2
     ports:
       - ${PORT}:${PORT}
     build: .
@@ -15,7 +16,9 @@ services:
     restart: always
   postgres:
     container_name: hls-db
-    image: postgres:16-alpine
+    image: scharascher/hls-db:task-2
+    build:
+      context: ./database
     restart: always
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
